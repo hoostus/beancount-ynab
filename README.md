@@ -2,7 +2,12 @@
 
 beancount is a plaintext accounting/personal finance system: https://bitbucket.org/blais/beancount/overview
 
-This is an importer between YNAB4 -- https://www.youneedabudget.com. YNAB4 is the previous, desktop based version, of the software.
+This is an importer between YNAB4 -- https://www.youneedabudget.com.
+YNAB4 is the previous, desktop based version, of the software.
+
+This is designed to be run on a recurring basis: you enter data in YNAB and then
+sync it into beancount. However, it also will work perfectly fine is you just
+want to do a one-time migration from YNAB to beancount.
 
 # Running the importer
 
@@ -83,29 +88,35 @@ Or you can leave them unmapped. If you leave them unmapped then the importer wil
     Category/__DeferredIncome__
 ~~~~
 
-This is not valid syntax in beancount, so bean-check will complain. But it makes it easy to search through your beanfile
-and add the correct accounts.
+This is not valid syntax in beancount, so bean-check will complain. But it makes
+it easy to search through your beanfile and add the correct accounts.
 
 ## Hidden Categories
 
-YNAB has the concept of hidden categories. These are budget categories that you are no longer using. Creating the mapping for them
-is a little tricky since YNAB effectively renames them.
+YNAB has the concept of hidden categories. These are budget categories that you
+are no longer using. Creating the mapping for them is a little tricky since YNAB
+effectively renames them.
 
-Imagine you had a master category called _Monthly Spending_. And inside of that you had a subcategory called _Yoga Classes_.
-You've quit yoga, so you've made it a hidden category, so that it doesn't clutter up YNAB. Normally you'd use a mapping key
-of *Monthly Spending:Yoga Classes*. But since it is now a hidden category you have to use *Hidden Categories:Monthly Spending ` Yoga ` A4*.
+Imagine you had a master category called _Monthly Spending_. And inside of that
+you had a subcategory called _Yoga Classes_. You've quit yoga, so you've made it
+a hidden category, so that it doesn't clutter up YNAB. Normally you'd use a
+mapping key of *Monthly Spending:Yoga Classes*. But since it is now a hidden
+category you have to use *Hidden Categories:Monthly Spending ` Yoga ` A4*.
 There are three things to note:
 
 1. The master category is now _Hidden Categories_
-2. YNAB uses the backtick (`) as a separator between the *old* master category and the subcategory.
-3. There's a magic number. This is an internal category id that YNAB uses. There's really no way to know what this is other than
-to run the import once and see if there are any errors about hidden categories.
+2. YNAB uses the backtick (`) as a separator between the *old* master category
+and the subcategory.
+3. There's a magic number. This is an internal category id that YNAB uses.
+There's really no way to know what this is other than to run the import once and
+see if there are any errors about hidden categories.
 
 # Rerunning the import
 
-The importer will generate a *ynab-id* metadata statement for each transaction. This allows you to re-run the importer
-multiple times and only import *new* transactions. This is what makes it possible to use YNAB every day for data entry and
-then sync new data over to beancount whenever you like.
+The importer will generate a *ynab-id* metadata statement for each transaction.
+This allows you to re-run the importer multiple times and only import *new*
+transactions. This is what makes it possible to use YNAB every day for data
+entry and then sync new data over to beancount whenever you like.
 
 ~~~~
 2016-12-31 * "Uber"
