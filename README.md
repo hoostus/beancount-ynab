@@ -146,3 +146,8 @@ entry and then sync new data over to beancount whenever you like.
 # What about recurring transactions?
 
 Those aren't imported into beancount. Not yet, at least.
+
+# What about flags/reconciliation?
+
+YNAB has flags, that track whether a given transaction has been
+reconciled or not. Those are currently not imported.
