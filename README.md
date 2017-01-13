@@ -11,7 +11,8 @@ want to do a one-time migration from YNAB to beancount.
 
 # Running the importer
 
-Running the import is straightforward, you just point it at your YNAB file and your beancount file.
+Running the import is straightforward, you just point it at your YNAB file and
+your beancount file.
 
 ./import.py ynab bean
 
@@ -52,8 +53,9 @@ Don't forget to run bean-check on the result!
 
 # Where is my YNAB file?
 
-Buried somewhere deep inside your YNAB folder there is a file named *Budget.yfull* which contains all of your transactions.
-That's the file the importer relies on. On my machine the full path is:
+Buried somewhere deep inside your YNAB folder there is a file named
+*Budget.yfull* which contains all of your transactions. That's the file the
+importer relies on. On my machine the full path is:
 
 *./YNAB/My Budget Test~CAB5B90E.ynab4/data1~E6B943B1/9133AEC3-2369-8AFB-52EB-CC52E6BE8478/Budget.yfull*
 
@@ -61,9 +63,10 @@ but it will be slightly different for you.
 
 # Adding metadata to the beancount file
 
-In order for the importer to map between YNAB and beancount, it relies on metadata in the beancount file. The *ynab-name* metadata
-on an account tells the importer how to match up accounts. YNAB has a two-level hierarchy of accounts. Use a colon (:) to separate
-the two levels.
+In order for the importer to map between YNAB and beancount, it relies on
+metadata in the beancount file. The *ynab-name* metadata on an account tells
+the importer how to match up accounts. YNAB has a two-level hierarchy of
+accounts. Use a colon (:) to separate the two levels.
 
 ~~~~
 2016-01-01 open Expenses:Vacation
@@ -72,7 +75,8 @@ the two levels.
 
 ## Income is a special case
 
-All income from YNAB will come from one of two accounts: *Categories/__DeferredIncome__* and *Categories/__ImmediateIncome__*.
+All income from YNAB will come from one of two accounts:
+*Categories/__DeferredIncome__* and *Categories/__ImmediateIncome__*.
 You can either map those to an account
 
 ~~~~
@@ -80,7 +84,8 @@ You can either map those to an account
     ynab-name: "Categories/__DeferredIncome__"
 ~~~~
 
-Or you can leave them unmapped. If you leave them unmapped then the importer will generate statements that look like
+Or you can leave them unmapped. If you leave them unmapped then the importer will
+generate statements that look like
 
 ~~~~
 2016-01-01 * "My Company"
@@ -110,6 +115,19 @@ and the subcategory.
 3. There's a magic number. This is an internal category id that YNAB uses.
 There's really no way to know what this is other than to run the import once and
 see if there are any errors about hidden categories.
+
+# Currency
+
+The importer will infer the currency of the transaction from the account in
+beancount.
+
+~~~~
+2016-01-01 open Assets:US:Cash  USD
+~~~~
+
+YNAB only supports a single currency so this seems like a better approach
+than specifying the currency in some other way. It does, however, require you
+to specify the currency on the account in beancount.
 
 # Rerunning the import
 

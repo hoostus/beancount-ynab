@@ -1,9 +1,5 @@
 #!/usr/bin/env python
 
-# TODO: How to handle hidden categories. Just tell them to suck it up?
-# Deal with income. I'm not sure there's a lot we can do....Have a link between payeeId and income type?
-# handle flags (reconciled, etc)
-
 import json
 import sys
 import beancount.loader
