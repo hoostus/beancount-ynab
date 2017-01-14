@@ -2,10 +2,12 @@
 
 import json
 import sys
-import beancount.loader
-import beancount.core
 import pprint
 import collections
+import datetime
+
+import beancount.loader
+import beancount.core
 
 TRANSACTION_TEMPLATE = """%(date)s * "%(payee)s"
     ynab-id: "%(ynabid)s"
@@ -103,7 +105,7 @@ def convert_ynab(txn, ynab, account_mapping, commodity):
 
     return vars
 
-def import_transactions(ynab, account_mapping, commodity, previous_imports):
+def import_transactions(ynab, account_mapping, commodity, previous_imports, since=None):
     # This is used to de-duplicate transfers. YNAB creates two transactions
     # (one for each account) but we only create one (which has 2 legs)
     transfers = []
@@ -114,6 +116,8 @@ def import_transactions(ynab, account_mapping, commodity, previous_imports):
     imported = 0
 
     for txn in ynab.transactions:
+        txn_date = datetime.datetime.strptime(txn['date'], "%Y-%m-%d")
+        if since and txn_date < since: continue
         # TODO: what exactly are these tombstones?
         if 'isTombstone' in txn: continue
         # TODO: why are $0 transactions in YNAB?
@@ -159,7 +163,10 @@ if __name__ == '__main__':
     )
     parser.add_argument('ynab', help='Path to the YNAB file.')
     parser.add_argument('bean', help='Path to the beancount file.')
+    parser.add_argument('--since', help='Format: YYYY-MM-DD; 2016-12-30. Only process transactions after this date. This will include transactions that occurred exactly on this date.')
     args = parser.parse_args()
+    if args.since:
+        args.since = datetime.datetime.strptime(args.since, "%Y-%m-%d")
 
     ynab = load_ynab(args.ynab)
     entries, account_mapping, commodity = build_account_mapping(args.bean)
@@ -169,7 +176,7 @@ if __name__ == '__main__':
         if 'ynab-id' in e.meta:
             previous_imports.append(e.meta['ynab-id'])
 
-    errors, warnings, skipped, imported = import_transactions(ynab, account_mapping, commodity, previous_imports)
+    errors, warnings, skipped, imported = import_transactions(ynab, account_mapping, commodity, previous_imports, since=args.since)
 
     print(len(errors), "errors during import", file=sys.stderr)
     if errors:
