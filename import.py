@@ -129,7 +129,9 @@ def import_transactions(ynab, account_mapping, commodity, previous_imports, sinc
 
         transfer_id = txn.get('transferTransactionId')
         # Skip if we already handled this via the other account
-        if transfer_id in transfers: continue
+        if txn['entityId'] in transfers:
+            assert transfer_id # We should only do this if it has a transfer id
+            continue
 
         if transfer_id:
             transfers.append(transfer_id)
