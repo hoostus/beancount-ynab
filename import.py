@@ -9,6 +9,8 @@ import datetime
 import beancount.loader
 import beancount.core
 
+import find_ynab
+
 TRANSACTION_TEMPLATE = """%(date)s * "%(payee)s"
     ynab-id: "%(ynabid)s"
     %(from_account)s    %(amount)s %(commodity)s
@@ -39,6 +41,7 @@ def build_account_mapping(beancount_fname):
                         assert len(entry.currencies) == 1, 'YNAB only supports a single currency on accounts'
                         commodity = entry.currencies[0]
                     if commodity and commodity != entry.currencies[0]:
+                        print(commodity, entry, entry.currencies[0])
                         raise("Commodity is being redefined but YNAB only supports one currency.")
                 account_mapping[entry.meta['ynab-name']] = entry.account
 
@@ -164,14 +167,14 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(
         description="Convert a YNAB file to beancount statements"
     )
-    parser.add_argument('ynab', help='Path to the YNAB file.')
+    parser.add_argument('ynab', help='Path to the YNAB root directory.')
     parser.add_argument('bean', help='Path to the beancount file.')
     parser.add_argument('--since', help='Format: YYYY-MM-DD; 2016-12-30. Only process transactions after this date. This will include transactions that occurred exactly on this date.')
     args = parser.parse_args()
     if args.since:
         args.since = datetime.datetime.strptime(args.since, "%Y-%m-%d")
 
-    ynab = load_ynab(args.ynab)
+    ynab = load_ynab(find_ynab.get_budget_filename(args.ynab))
     entries, account_mapping, commodity = build_account_mapping(args.bean)
 
     previous_imports = []
