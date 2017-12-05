@@ -71,8 +71,11 @@ def get_budget_filename(root):
         budget = os.path.join(get_datadir(root), guid, 'Budget.yfull')
         if os.path.exists(budget):
             return budget
-    print('No Budget.yfull found? Expected to find it in %s' % matched)
-    sys.exit(1)
+    else:
+        print('No Budget.yfull found? Expected to find it in...')
+        print([(m, devices[m]['deviceGUID']) for m in matched])
+        print('Is the latest file mobile only? Open the desktop app to sync.')
+        sys.exit(1)
 
 if __name__ == '__main__':
     root = sys.argv[1]
