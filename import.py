@@ -116,15 +116,21 @@ def import_transactions(ynab, account_mapping, commodity, previous_imports, sinc
     errors = []
     warnings = []
     skipped = 0
+    unreconciled = 0
     imported = 0
 
     for txn in ynab.transactions:
         txn_date = datetime.datetime.strptime(txn['date'], "%Y-%m-%d")
         if since and txn_date < since: continue
-        # TODO: what exactly are these tombstones?
+        # From https://jack.codes/projects/2016/09/13/reversing-the-ynab-file-format-part-1/
+        # "Deleted transactions are not deleted but have their “isTombstone” flag set to true."
         if 'isTombstone' in txn: continue
         # TODO: why are $0 transactions in YNAB?
         if txn['amount'] == 0: continue
+        # Skip transactions that haven't been reconciled
+        if txn['cleared'] != 'Reconciled':
+            unreconciled += 1
+            continue
         # We've already imported it once before into beancount
         if txn['entityId'] in previous_imports:
             skipped += 1
@@ -160,7 +166,7 @@ def import_transactions(ynab, account_mapping, commodity, previous_imports, sinc
             errors.append((e, txn))
             raise(e)
 
-    return errors, warnings, skipped, imported
+    return errors, warnings, skipped, imported, unreconciled
 
 if __name__ == '__main__':
     import argparse
@@ -182,7 +188,7 @@ if __name__ == '__main__':
         if 'ynab-id' in e.meta:
             previous_imports.append(e.meta['ynab-id'])
 
-    errors, warnings, skipped, imported = import_transactions(ynab, account_mapping, commodity, previous_imports, since=args.since)
+    errors, warnings, skipped, imported, unreconciled = import_transactions(ynab, account_mapping, commodity, previous_imports, since=args.since)
 
     print(len(errors), "errors during import", file=sys.stderr)
     if errors:
@@ -192,5 +198,6 @@ if __name__ == '__main__':
         print("\tCheck and fix income statements.", file=sys.stderr)
         print("\tSearch for Category/__ImmediateIncome__ and Category/__DeferredIncome__.", file=sys.stderr)
     print(imported, "imported.", file=sys.stderr)
+    print(unreconciled, "unreconciled. <<Only reconciled transactions are imported>>", file=sys.stderr)
     print(skipped, "already imported; skipped.", file=sys.stderr)
     print("Don't forget to run bean-check on the result!", file=sys.stderr)
