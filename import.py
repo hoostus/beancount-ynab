@@ -92,7 +92,7 @@ def convert_ynab(txn, ynab, account_mapping, commodity):
     vars['memo'] = txn.get('memo')
     vars['from_account'] = get_beancount_account(txn['accountId'], ynab.accounts, account_mapping)
     vars['ynabid'] = txn['entityId']
-
+    
     # We always insert commas.
     vars['amount'] = "{:,}".format(txn['amount'])
 
@@ -185,6 +185,7 @@ if __name__ == '__main__':
 
     previous_imports = []
     for e in entries:
+        if not isinstance(e, beancount.core.data.Transaction): continue
         if 'ynab-id' in e.meta:
             previous_imports.append(e.meta['ynab-id'])
 
