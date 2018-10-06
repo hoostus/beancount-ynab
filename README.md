@@ -57,7 +57,7 @@ Buried somewhere deep inside your YNAB folder there is a file named
 *Budget.yfull* which contains all of your transactions. That's the file the
 importer relies on. On my machine the full path is:
 
-*./YNAB/My Budget Test~CAB5B90E.ynab4/data1~E6B943B1/9133AEC3-2369-8AFB-52EB-CC52E6BE8478/Budget.yfull*
+`./YNAB/My Budget Test~CAB5B90E.ynab4/data1~E6B943B1/9133AEC3-2369-8AFB-52EB-CC52E6BE8478/Budget.yfull`
 
 but it will be slightly different for you.
 
@@ -76,7 +76,7 @@ accounts. Use a colon (:) to separate the two levels.
 ## Income is a special case
 
 All income from YNAB will come from one of two accounts:
-*Categories/__DeferredIncome__* and *Categories/__ImmediateIncome__*.
+`Categories/__DeferredIncome__` and `Categories/__ImmediateIncome__`.
 You can either map those to an account
 
 ~~~~
@@ -106,7 +106,10 @@ Imagine you had a master category called _Monthly Spending_. And inside of that
 you had a subcategory called _Yoga Classes_. You've quit yoga, so you've made it
 a hidden category, so that it doesn't clutter up YNAB. Normally you'd use a
 mapping key of *Monthly Spending:Yoga Classes*. But since it is now a hidden
-category you have to use *Hidden Categories:Monthly Spending ` Yoga ` A4*.
+category you have to use
+~~~
+Hidden Categories:Monthly Spending ` Yoga ` A4
+~~~
 There are three things to note:
 
 1. The master category is now _Hidden Categories_
