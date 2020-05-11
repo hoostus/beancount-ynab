@@ -1,3 +1,6 @@
-__pycache__/*
+__pycache__
 runit
 test.log
+venv
+.vscode
+.pytest_cache
