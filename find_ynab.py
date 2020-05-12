@@ -52,7 +52,11 @@ def find_devices_with_full_knowledge(devices, full_knowledge):
     matched = []
     for dev in devices.values():
         k = extract_knowledge(dev)
-        if k == full_knowledge:
+        # create a subset of k using only devices listed in full_knowledge
+        # this means we only are comparing "live" devices and ignoring ones
+        # that have been deleted
+        subsetdict = dict(map(lambda key: (key, k.get(key, None)), full_knowledge.keys()))
+        if subsetdict == full_knowledge:
 #            print('Matched', dev['friendlyName'], dev['shortDeviceId'])
             matched.append(dev['shortDeviceId'])
     return matched
