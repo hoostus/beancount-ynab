@@ -66,6 +66,7 @@ def get_categories(data):
     all = entity_dict(data)
     for m in data:
         if 'isTombstone' in m: continue
+        if not m['subCategories']: continue
         new_dict = entity_dict(m['subCategories'])
         all.update(new_dict)
     return all
