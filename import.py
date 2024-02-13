@@ -48,7 +48,7 @@ def build_account_mapping(beancount_fname):
     return entries, account_mapping, commodity
 
 def load_ynab(filename):
-    ynab = json.load(open(filename))
+    ynab = json.load(open(filename, encoding='utf-8-sig'))
     payees = entity_dict(ynab['payees'])
     accounts = entity_dict(ynab['accounts'])
     categories = get_categories(ynab['masterCategories'])
